@@ -1,3 +1,20 @@
+<?php
+if(isset($_POST["submitBtn"])){
+    $file = fopen("text.txt", 'w+');
+    fwrite($file, $_POST['text']);
+    fclose($file);
+}
+if(isset($_POST['appendBtn'])){
+    if(file_exists('text.txt')){
+        $file = fopen("text.txt", 'a');
+        if($file){
+            fwrite($file, (' '.$_POST['text']));
+            fclose($file);
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +40,9 @@
     <form action="#" method="post"  class="box">
         <textarea name="text" id="textar"><?php 
             if(isset($_POST["changeBtn"])){
-                echo file_get_contents("text.txt");
+                if(file_exists('text.txt')){
+                    echo file_get_contents("text.txt");
+                }
             }
         ?></textarea>
         <input type="submit" name="changeBtn" value="change">
@@ -31,24 +50,19 @@
         <input type="submit" name="appendBtn" value="append" style="grid-column:1/3;">
     </form>
     <p id="intext"><?php
-        if(isset($_POST["submitBtn"])){
-            $file = fopen("text.txt", 'w+');
-            fwrite($file, $_POST['text']);
-            fclose($file);
-        }
-        if(isset($_POST['appendBtn'])){
-            $file = fopen("text.txt", 'a');
+        if(file_exists('text.txt')){
+            $file = fopen('text.txt', 'r');
             if($file){
-                fwrite($file, (' '.$_POST['text']));
+                while(!feof($file)){
+                    echo fgets($file)."<br>";
+                }
                 fclose($file);
             }
+            else{
+                echo "can`t open file";
+            }
         }
-        $file = fopen('text.txt', 'r');
-        if($file){
-            echo fgets($file);
-            fclose($file);
-        
-        }else{
+        else{
             echo "no file";
         } 
     ?></p>
